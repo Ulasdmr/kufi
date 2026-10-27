@@ -1,19 +1,16 @@
-# Kufi: Local Barbers and Salons Discovery and Appointment Platform
+# Kufi: Local Barber and Salon Discovery and Appointment Platform
 
-## Project Description
-Kufi is a digital platform designed to bridge the gap between consumers and local grooming service providers. It simplifies how clients find barbers and salons, view transparent pricing, and reserve appointments without relying on manual phone calls.
+Kufi is a web and mobile-compatible platform that enables customers to discover local barbers and hair salons, view transparent service pricing, and book real-time appointments without the risk of double-booking.
 
-## Objective
-The objective of this project is to develop a reliable backend architecture and responsive web application that streamlines local salon discovery, prevents double-booking through verified calendar slots, and equips business owners with digital schedule management tools.
+## Planned Features (MVP)
+- **FR-01 (Must):** Secure user registration and login using BCrypt and JWT.
+- **FR-02 & FR-03 (Must):** Salon profile management, service catalog definition, and location-based search.
+- **FR-04 & FR-05 (Must/Should):** Available time slot calculation and conflict-controlled appointment booking.
 
-## Target Users
-* **Clients:** Individuals searching for grooming services, checking ratings, and reserving appointments online.
-* **Service Providers:** Local barbers and salon operators managing service lists, prices, and client schedules.
+## Project Scope
+- **In Scope:** Role-based authentication, salon catalog management, available time slot querying, and appointment scheduling.
+- **Out of Scope:** Online credit card payments (Virtual POS integration) and AI-based hairstyle recommendations.
 
-## Planned Technologies
-* **Backend:** Java, Spring Boot, RESTful APIs
-* **Database:** PostgreSQL
-* **Version Control:** Git & GitHub
-
-## Current Status
-Week 1: Project definition, requirement formulation, and initial research completed.
+## Current Status: Week 2
+- **Week 1:** Project definition, problem analysis, and GitHub repository setup completed.
+- **Week 2:** Functional requirements, non-functional requirements, user stories, and milestone planning documented.
