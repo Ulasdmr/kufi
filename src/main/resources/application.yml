@@ -1,0 +1,15 @@
+server:
+  port: ${PORT:8080}
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/kufi_db}
+    username: ${DB_USERNAME:kufi}
+    password: ${DB_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update # LOCAL MVP only; use migrations for production
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-minutes: 120

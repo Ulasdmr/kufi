@@ -1,0 +1,8 @@
+ID,Operation,Expected result,Actual status,Notes/evidence
+R01,Fresh clone,Repository cloned with all code,PENDING,No clean-room clone attempted here
+R02,Install dependencies,Maven resolves dependencies,PENDING,Execute on clean clone
+R03,Configure PostgreSQL,Database ready; no credentials in Git,PENDING,Use .env and Compose
+R04,Run API,App starts on localhost 8080,PENDING,Check startup output
+R05,Integrated workflow,14 HTTP scenarios pass,PENDING,Run week7_integration_smoke.py
+R06,Automated tests,13/13 JUnit pass on clean clone,PENDING,Surefire output
+R07,PostgreSQL concurrency,Exactly one booking accepted for 2 simultaneous requests,PENDING,H2 != PostgreSQL
