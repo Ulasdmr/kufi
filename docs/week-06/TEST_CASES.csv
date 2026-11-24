@@ -1,0 +1,22 @@
+Test ID,Method,Objective,Input,Expected Result,Actual Result,Status,Evidence
+S01,Pure Java,End-time computation,14:00 + 45 min,14:45,14:45,PASS,pure-java-smoke-2026-11-25.log
+S02,Pure Java,Partial overlap,14:00–14:45 and 14:30–15:00,Overlap true,Overlap true,PASS,pure-java-smoke-2026-11-25.log
+S03,Pure Java,Adjacent interval boundary,14:00–14:45 and 14:45–15:30,No overlap,No overlap,PASS,pure-java-smoke-2026-11-25.log
+S04,Pure Java,Within operating hours,14:00–14:45 / 09–18,True,True,PASS,pure-java-smoke-2026-11-25.log
+S05,Pure Java,Outside operating hours,14:00–19:00 / 09–18,False,False,PASS,pure-java-smoke-2026-11-25.log
+S06,Pure Java,Zero duration invalid,duration=0,IllegalArgumentException,IllegalArgumentException,PASS,pure-java-smoke-2026-11-25.log
+T01,JUnit,45-minute appointment end,14:00 + 45 min,14:45,Maven Surefire: 13 tests, 0 failures, 0 errors,PASS,evidence/week-06/maven-surefire-summary.txt
+T02,JUnit,Partial overlap,14:00–14:45 vs 14:30–15:00,Overlap true,Maven Surefire: 13 tests, 0 failures, 0 errors,PASS,evidence/week-06/maven-surefire-summary.txt
+T03,JUnit,Adjacent slots,14:00–14:45 vs 14:45–15:30,Overlap false,Maven Surefire: 13 tests, 0 failures, 0 errors,PASS,evidence/week-06/maven-surefire-summary.txt
+T04,JUnit,Operating hour boundary,09:00–18:00 business day; 14:00–14:45 vs 14:00–19:00,First true; second false,Maven Surefire: 13 tests, 0 failures, 0 errors,PASS,evidence/week-06/maven-surefire-summary.txt
+T05,JUnit,Non-positive duration,durationMinutes=0,IllegalArgumentException,Maven Surefire: 13 tests, 0 failures, 0 errors,PASS,evidence/week-06/maven-surefire-summary.txt
+T06,MockMvc/H2,BCrypt + duplicate email,Register duplicate,Hash stored; HTTP 409,Maven Surefire: 13 tests, 0 failures, 0 errors,PASS,evidence/week-06/maven-surefire-summary.txt
+T07,MockMvc/H2,Invalid login & JWT,Incorrect password/invalid token,HTTP 401,Maven Surefire: 13 tests, 0 failures, 0 errors,PASS,evidence/week-06/maven-surefire-summary.txt
+T08,MockMvc/H2,Shop district and role,District filter + customer create,"GET 200, POST 403",Maven Surefire: 13 tests, 0 failures, 0 errors,PASS,evidence/week-06/maven-surefire-summary.txt
+T09,MockMvc/H2,Invalid service price,-1 TRY,HTTP 400,Maven Surefire: 13 tests, 0 failures, 0 errors,PASS,evidence/week-06/maven-surefire-summary.txt
+T10,MockMvc/H2,Booking and conflict,"14:00, 14:30","HTTP 201 then 409, one record",Maven Surefire: 13 tests, 0 failures, 0 errors,PASS,evidence/week-06/maven-surefire-summary.txt
+T11,MockMvc/H2,Adjacent & past boundary,14:45 and past date,HTTP 201 and 400,Maven Surefire: 13 tests, 0 failures, 0 errors,PASS,evidence/week-06/maven-surefire-summary.txt
+T12,MockMvc/H2,Cancellation and ownership,Unauthorized cancel and proper cancel,"403, 200, rebook 201",Maven Surefire: 13 tests, 0 failures, 0 errors,PASS,evidence/week-06/maven-surefire-summary.txt
+T13,H2 concurrency,Simultaneous booking,Two threads same shop/time,Exactly one accepted,Maven Surefire: 13 tests, 0 failures, 0 errors,PASS,evidence/week-06/maven-surefire-summary.txt
+T14,PostgreSQL manual,Production-like conflict,2 concurrent clients,201 + 409 and one row,Not yet run on PostgreSQL; H2 pass does not verify PostgreSQL,NOT RUN,
+T15,JMeter/Postman load (planned),Week 2 p95 <= 500 ms requirement,"50 virtual users, 500 shops, 5000 appointments",p95 <= 500 ms,No load test executed in Week 6 baseline,NOT RUN,No benchmark output available

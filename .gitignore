@@ -1,0 +1,14 @@
+target/
+.idea/
+.vscode/
+*.iml
+.DS_Store
+.env
+.env.*
+!.env.example
+*.log
+*.key
+*.pem
+*.p12
+**/application-local.yml
+**/application-prod.yml

@@ -1,0 +1,88 @@
+diff --git a/src/main/java/com/kufi/backend/user/UserAccount.java b/src/main/java/com/kufi/backend/user/UserAccount.java
+--- a/src/main/java/com/kufi/backend/user/UserAccount.java
++++ b/src/main/java/com/kufi/backend/user/UserAccount.java
+@@ -9,6 +9,8 @@
+     @Column(nullable = false, length = 30) public String phone;
+     @Enumerated(EnumType.STRING) @Column(nullable = false, length = 20) public Role role;
+     protected UserAccount() { }
++    public Long getId() { return id; }
++    public String getEmail() { return email; }
+     public UserAccount(String email, String passwordHash, String phone, Role role) {
+         this.email = email; this.passwordHash = passwordHash; this.phone = phone; this.role = role;
+     }
+diff --git a/src/main/java/com/kufi/backend/shop/BarberShop.java b/src/main/java/com/kufi/backend/shop/BarberShop.java
+--- a/src/main/java/com/kufi/backend/shop/BarberShop.java
++++ b/src/main/java/com/kufi/backend/shop/BarberShop.java
+@@ -13,6 +13,9 @@
+     @Column(nullable=false) public LocalTime openingTime;
+     @Column(nullable=false) public LocalTime closingTime;
+     protected BarberShop() {}
++    public Long getId() { return id; }
++    public String getName() { return name; }
++    public UserAccount getOwner() { return owner; }
+     public BarberShop(UserAccount owner,String name,String city,String district,String address,LocalTime opening,LocalTime closing) {
+         this.owner=owner;this.name=name;this.city=city;this.district=district;this.address=address;this.openingTime=opening;this.closingTime=closing;
+     }
+diff --git a/src/main/java/com/kufi/backend/shop/ServiceOffering.java b/src/main/java/com/kufi/backend/shop/ServiceOffering.java
+--- a/src/main/java/com/kufi/backend/shop/ServiceOffering.java
++++ b/src/main/java/com/kufi/backend/shop/ServiceOffering.java
+@@ -9,6 +9,9 @@
+     @Column(nullable=false) public int durationMinutes;
+     @Column(nullable=false,precision=12,scale=2) public BigDecimal price;
+     protected ServiceOffering() {}
++    public Long getId() { return id; }
++    public String getName() { return name; }
++    public BarberShop getShop() { return shop; }
+     public ServiceOffering(BarberShop shop,String name,int durationMinutes,BigDecimal price) {
+         this.shop=shop;this.name=name;this.durationMinutes=durationMinutes;this.price=price;
+     }
+diff --git a/src/main/java/com/kufi/backend/shop/ShopController.java b/src/main/java/com/kufi/backend/shop/ShopController.java
+--- a/src/main/java/com/kufi/backend/shop/ShopController.java
++++ b/src/main/java/com/kufi/backend/shop/ShopController.java
+@@ -37,7 +37,7 @@
+     @PostMapping("/{shopId}/services") @Transactional
+     public ResponseEntity<ServiceResponse> addService(@PathVariable Long shopId,@Valid @RequestBody ServiceRequest req,Authentication auth) {
+         BarberShop shop=shops.findById(shopId).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Shop not found"));
+-        if(!shop.owner.email.equalsIgnoreCase(auth.getName())) throw new ApiException(HttpStatus.FORBIDDEN,"You do not own this shop");
++        if(!shop.getOwner().getEmail().equalsIgnoreCase(auth.getName())) throw new ApiException(HttpStatus.FORBIDDEN,"You do not own this shop");
+         ServiceOffering s=services.save(new ServiceOffering(shop,req.name(),req.durationMinutes(),req.price()));
+         return ResponseEntity.status(HttpStatus.CREATED).body(toService(s));
+     }
+@@ -48,5 +48,5 @@
+     }
+     private UserAccount currentUser(Authentication auth) { return users.findByEmailIgnoreCase(auth.getName()).orElseThrow(()->new ApiException(HttpStatus.UNAUTHORIZED,"User not found")); }
+     private static ShopResponse toShop(BarberShop s) {return new ShopResponse(s.id,s.name,s.city,s.district,s.address,s.openingTime,s.closingTime);}
+-    private static ServiceResponse toService(ServiceOffering s) {return new ServiceResponse(s.id,s.shop.id,s.name,s.durationMinutes,s.price);}
++    private static ServiceResponse toService(ServiceOffering s) {return new ServiceResponse(s.getId(),s.getShop().getId(),s.getName(),s.durationMinutes,s.price);}
+ }
+diff --git a/src/main/java/com/kufi/backend/appointment/AppointmentService.java b/src/main/java/com/kufi/backend/appointment/AppointmentService.java
+--- a/src/main/java/com/kufi/backend/appointment/AppointmentService.java
++++ b/src/main/java/com/kufi/backend/appointment/AppointmentService.java
+@@ -28,7 +28,7 @@
+         // Serialize bookings for the same shop. A naked JPQL overlap check is race-prone.
+         BarberShop shop=shops.findByIdForUpdate(shopId).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Shop not found"));
+         ServiceOffering service=services.findById(serviceId).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Service not found"));
+-        if(!service.shop.id.equals(shop.id)) throw new ApiException(HttpStatus.BAD_REQUEST,"Service does not belong to selected shop");
++        if(!service.getShop().getId().equals(shop.getId())) throw new ApiException(HttpStatus.BAD_REQUEST,"Service does not belong to selected shop");
+         if(start==null || !start.isAfter(LocalDateTime.now())) throw new ApiException(HttpStatus.BAD_REQUEST,"Appointment must be in the future");
+         LocalDateTime end=BookingTimeRules.calculateEnd(start,service.durationMinutes);
+         if(!BookingTimeRules.withinShopHours(start,end,shop.openingTime,shop.closingTime))
+@@ -41,8 +41,8 @@
+     @Transactional
+     public AppointmentView cancel(Long appointmentId,String email) {
+         Appointment a=appointments.findById(appointmentId).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Appointment not found"));
+-        boolean customer=a.customer.email.equalsIgnoreCase(email);
+-        boolean owner=a.shop.owner.email.equalsIgnoreCase(email);
++        boolean customer=a.customer.getEmail().equalsIgnoreCase(email);
++        boolean owner=a.shop.getOwner().getEmail().equalsIgnoreCase(email);
+         if(!customer && !owner) throw new ApiException(HttpStatus.FORBIDDEN,"Cannot cancel another user's appointment");
+         a.status=AppointmentStatus.CANCELLED;
+         return map(a);
+@@ -50,6 +50,6 @@
+     @Transactional(readOnly=true)
+     public List<AppointmentView> my(String email) {return appointments.findVisibleTo(email).stream().map(AppointmentService::map).toList();}
+     private static AppointmentView map(Appointment a) {
+-        return new AppointmentView(a.id,a.shop.id,a.shop.name,a.service.id,a.service.name,a.startTime,a.endTime,a.status.name());
++        return new AppointmentView(a.id,a.shop.getId(),a.shop.getName(),a.service.getId(),a.service.getName(),a.startTime,a.endTime,a.status.name());
+     }
+ }

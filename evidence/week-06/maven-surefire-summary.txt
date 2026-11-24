@@ -1,0 +1,9 @@
+Kufi Week 6: Maven Surefire verified report summary
+Generated from target/surefire-reports/*.txt on student machine
+No credentials or JWTs included
+
+ConcurrentBookingTest: tests=1, failures=0, errors=0, skipped=0
+KufiApiIntegrationTest: tests=7, failures=0, errors=0, skipped=0
+appointment.BookingTimeRulesTest: tests=5, failures=0, errors=0, skipped=0
+
+TOTAL: tests=13, failures=0, errors=0, skipped=0
