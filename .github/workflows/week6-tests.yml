@@ -1,7 +1,7 @@
 name: Week 6 - Kufi unit and integration tests
 on:
   push:
-    branches: [main, week6-testing]
+    branches: [main, week6-testing, week7-integration]
   pull_request:
     branches: [main]
   workflow_dispatch:

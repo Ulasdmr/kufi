@@ -1,0 +1,16 @@
+digraph G {
+    graph [rankdir=TB, bgcolor="white",pad=.24, nodesep=.25, ranksep=.38];
+    node [shape=box,style="rounded,filled", fillcolor="#edf2f7",color="#8b9cad",fontname="Helvetica",fontsize=11,margin=".12,.08"];
+    edge [color="#2f5867", penwidth=1.2, arrowsize=.65];
+    Client [label="Customer / Barber\nREST client", fillcolor="#d7eef0"];
+    JWT [label="Spring Security\nJWT validation"];
+    Auth [label="Auth / Users"];
+    Shop [label="Shop / Catalog"];
+    Appointments [label="Appointment Service\nTime rules + shop lock"];
+    JPA [label="Spring Data JPA / Hibernate",fillcolor="#dfe9f6"];
+    DB [label="PostgreSQL 16\nRuntime",shape=cylinder,fillcolor="#d9eadb"];
+    H2 [label="H2\nJUnit only",shape=cylinder,fillcolor="#fff2cf"];
+    Client -> JWT; JWT -> {Auth Shop Appointments};
+    Auth -> JPA; Shop -> JPA; Appointments -> JPA; JPA -> DB;
+    JPA -> H2 [style=dashed,label="tests",fontsize=9];
+    }
