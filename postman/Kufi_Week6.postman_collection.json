@@ -1,0 +1,438 @@
+{
+  "info": {
+    "name": "Kufi Week 6 – Validation Run",
+    "description": "Run sequentially. Actual results must be saved after execution; do not report this collection as already run.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "futureDay",
+      "value": "2030-05-10"
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Register barber",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/auth/register",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "register"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"barber-week6@example.test\",\n  \"password\": \"TestPassword123!\",\n  \"phone\": \"5550000000\",\n  \"role\": \"BARBER\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"201\",()=>pm.response.to.have.status(201));",
+              "pm.collectionVariables.set(\"barberToken\",pm.response.json().accessToken);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Register customer",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/auth/register",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "register"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"customer-week6@example.test\",\n  \"password\": \"TestPassword123!\",\n  \"phone\": \"5550000001\",\n  \"role\": \"CUSTOMER\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"201\",()=>pm.response.to.have.status(201));",
+              "pm.collectionVariables.set(\"customerToken\",pm.response.json().accessToken);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Register another customer",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/auth/register",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "register"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"other-week6@example.test\",\n  \"password\": \"TestPassword123!\",\n  \"phone\": \"5550000002\",\n  \"role\": \"CUSTOMER\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"201\",()=>pm.response.to.have.status(201));",
+              "pm.collectionVariables.set(\"otherToken\",pm.response.json().accessToken);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Create shop",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{barberToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/shops",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "shops"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Kufi Demo\",\n  \"city\": \"Istanbul\",\n  \"district\": \"Gungoren\",\n  \"address\": \"Demo Street\",\n  \"openingTime\": \"09:00\",\n  \"closingTime\": \"18:00\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"201\",()=>pm.response.to.have.status(201));",
+              "pm.collectionVariables.set(\"shopId\",pm.response.json().shopId);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Add service",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{barberToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/shops/{{shopId}}/services",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "shops",
+            "{{shopId}}",
+            "services"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Haircut\",\n  \"durationMinutes\": 45,\n  \"price\": 350\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"201\",()=>pm.response.to.have.status(201));",
+              "pm.collectionVariables.set(\"serviceId\",pm.response.json().serviceId);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Book successful",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{customerToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/appointments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "appointments"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"shopId\": {{shopId}},\n  \"serviceId\": {{serviceId}},\n  \"startTime\": \"{{futureDay}}T14:00:00\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"201\",()=>pm.response.to.have.status(201));",
+              "pm.collectionVariables.set(\"appointmentId\",pm.response.json().appointmentId);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Overlap returns 409",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{otherToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/appointments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "appointments"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"shopId\": {{shopId}},\n  \"serviceId\": {{serviceId}},\n  \"startTime\": \"{{futureDay}}T14:30:00\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"409\",()=>pm.response.to.have.status(409));"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 Negative price 400",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{barberToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/shops/{{shopId}}/services",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "shops",
+            "{{shopId}}",
+            "services"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Invalid\",\n  \"durationMinutes\": 30,\n  \"price\": -5\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"400\",()=>pm.response.to.have.status(400));"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 Cancel booking",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{customerToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/appointments/{{appointmentId}}/cancel",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "appointments",
+            "{{appointmentId}}",
+            "cancel"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"200\",()=>pm.response.to.have.status(200));"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 Rebook after cancellation",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{otherToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/appointments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "appointments"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"shopId\": {{shopId}},\n  \"serviceId\": {{serviceId}},\n  \"startTime\": \"{{futureDay}}T14:00:00\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"201\",()=>pm.response.to.have.status(201));"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    }
+  ]
+}
